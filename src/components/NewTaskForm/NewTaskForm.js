@@ -16,12 +16,7 @@ class NewTaskForm extends React.Component {
 
   handleSubmit(event) {
     if (!!this.state.value) {
-      this.props.addTask({
-        content: this.state.value,
-        completed: false,
-        creationTime: new Date(),
-        id: crypto.randomUUID(),
-      });
+      this.props.addTask(this.state.value);
       this.setState({ value: '' });
     }
 

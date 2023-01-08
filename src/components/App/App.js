@@ -37,9 +37,15 @@ class App extends React.Component {
     this.completeTaskHandler = this.completeTaskHandler.bind(this);
   }
 
-  addTaskHandler(task) {
+  addTaskHandler(text) {
+    const newTask = {
+      content: text,
+      completed: false,
+      creationTime: new Date(),
+      id: crypto.randomUUID(),
+    };
     this.setState(({ tasks }) => {
-      return { tasks: [task, ...tasks] };
+      return { tasks: [newTask, ...tasks] };
     });
   }
   deleteTaskHandler(id) {
@@ -49,13 +55,12 @@ class App extends React.Component {
       };
     });
   }
-
   completeTaskHandler(id) {
     this.setState(({ tasks }) => {
       return {
         tasks: tasks.map((task) => {
           if (task.id === id) {
-            task.completed = !task.completed;
+            return { ...task, completed: !task.completed };
           }
           return task;
         }),
@@ -63,21 +68,30 @@ class App extends React.Component {
     });
   }
 
+  clearCompletedHandler = () => {
+    this.setState(({ tasks }) => {
+      return {
+        tasks: tasks.filter((task) => task.completed !== true),
+      };
+    });
+  };
+
   render() {
     const tasks = this.state.tasks;
-    const addTaskHandler = this.addTaskHandler;
-    const deleteTaskHandler = this.deleteTaskHandler;
-    const completeTaskHandler = this.completeTaskHandler;
+    const todoCount = tasks.filter((task) => task.completed !== true).length;
     return (
       <section className="todoapp">
-        <Header addTask={addTaskHandler} />
+        <Header addTask={this.addTaskHandler} />
         <section className="main">
           <TaskList
             tasks={tasks}
-            deleteTask={deleteTaskHandler}
-            completeTask={completeTaskHandler}
+            deleteTask={this.deleteTaskHandler}
+            completeTask={this.completeTaskHandler}
           />
-          <Footer />
+          <Footer
+            todoCount={todoCount}
+            clearCompleted={this.clearCompletedHandler}
+          />
         </section>
       </section>
     );
