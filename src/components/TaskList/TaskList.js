@@ -3,7 +3,7 @@ import { formatDistanceToNow } from 'date-fns';
 import './TaskList.css';
 import Task from '../Task/';
 
-function TaskList({ tasks, deleteTask, completeTask }) {
+function TaskList({ tasks, deleteTask, completeTask, updateTask }) {
   return (
     <ul className="todo-list">
       {tasks.map((task) => {
@@ -16,15 +16,10 @@ function TaskList({ tasks, deleteTask, completeTask }) {
             creationTime={formatDistanceToNow(task.creationTime)}
             deleteTask={deleteTask}
             completeTask={completeTask}
+            updateTask={updateTask}
           />
         );
       })}
-
-      <Task
-        edit="editing"
-        content="Editing task"
-        creationTime="15 minutes ago"
-      />
     </ul>
   );
 }
