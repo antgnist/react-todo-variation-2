@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './Header.css';
 import NewTaskForm from '../NewTaskForm';
 
@@ -10,5 +11,12 @@ function Header({ addTask }) {
     </header>
   );
 }
+
+Header.defaultProps = {
+  addTask: () => {},
+};
+Header.propTypes = {
+  addTask: PropTypes.func,
+};
 
 export default Header;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './NewTaskForm.css';
 
 class NewTaskForm extends React.Component {
@@ -9,6 +10,13 @@ class NewTaskForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+
+  static defaultProps = {
+    addTask: () => {},
+  };
+  static propTypes = {
+    addTask: PropTypes.func,
+  };
 
   handleChange(event) {
     this.setState({ value: event.target.value });

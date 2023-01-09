@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { formatDistanceToNow } from 'date-fns';
 import './TaskList.css';
 import Task from '../Task/';
@@ -23,5 +24,18 @@ function TaskList({ tasks, deleteTask, completeTask, updateTask }) {
     </ul>
   );
 }
+
+TaskList.defaultProps = {
+  deleteTask: () => {},
+  completeTask: () => {},
+  updateTask: () => {},
+  tasks: [],
+};
+TaskList.propTypes = {
+  deleteTask: PropTypes.func,
+  completeTask: PropTypes.func,
+  updateTask: PropTypes.func,
+  tasks: PropTypes.arrayOf(PropTypes.object),
+};
 
 export default TaskList;

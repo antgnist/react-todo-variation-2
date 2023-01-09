@@ -1,9 +1,28 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import './Task.css';
 
 class Task extends React.Component {
   state = { edit: false, oldValue: '', firstEditChange: true };
+
+  static defaultProps = {
+    deleteTask: () => {},
+    completeTask: () => {},
+    updateTask: () => {},
+    id: '',
+    completed: false,
+    content: '',
+    creationTime: 'some time ago',
+  };
+  static propTypes = {
+    deleteTask: PropTypes.func,
+    completeTask: PropTypes.func,
+    updateTask: PropTypes.func,
+    id: PropTypes.string,
+    completed: PropTypes.bool,
+    content: PropTypes.string,
+    creationTime: PropTypes.string,
+  };
 
   editOnHandler = () => {
     this.setState({ edit: true });

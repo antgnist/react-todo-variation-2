@@ -2,10 +2,7 @@ import React from 'react';
 import './App.css';
 import Header from '../Header';
 import Footer from '../Footer';
-import NewTaskForm from '../NewTaskForm';
-import Task from '../Task';
 import TaskList from '../TaskList';
-import TasksFilter from '../TasksFilter';
 
 class App extends React.Component {
   constructor(props) {
