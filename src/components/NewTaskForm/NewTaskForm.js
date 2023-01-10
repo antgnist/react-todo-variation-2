@@ -23,7 +23,7 @@ class NewTaskForm extends React.Component {
   }
 
   handleSubmit(event) {
-    if (!!this.state.value) {
+    if (this.state.value) {
       this.props.addTask(this.state.value);
       this.setState({ value: '' });
     }

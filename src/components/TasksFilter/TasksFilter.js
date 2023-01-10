@@ -28,17 +28,11 @@ class TasksFilter extends React.Component {
     return (
       <ul className="filters">
         {this.buttons.map(({ name, label, className }) => {
-          const clazz =
-            currentFilter === name ? className + ' selected' : className;
+          const clazz = currentFilter === name ? className + ' selected' : className;
 
           return (
             <li key={name}>
-              <button
-                type="button"
-                name={name}
-                className={clazz}
-                onClick={() => setFilter(name)}
-              >
+              <button type="button" name={name} className={clazz} onClick={() => setFilter(name)}>
                 {label}
               </button>
             </li>

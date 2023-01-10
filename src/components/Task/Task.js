@@ -44,8 +44,7 @@ class Task extends React.Component {
   };
 
   render() {
-    const { completed, content, creationTime, id, deleteTask, completeTask } =
-      this.props;
+    const { completed, content, creationTime, id, deleteTask, completeTask } = this.props;
 
     let classView = completed ? 'completed' : '';
     if (this.state.edit) {
@@ -80,12 +79,7 @@ class Task extends React.Component {
           ></button>
         </div>
         <form onSubmit={this.handleSubmit}>
-          <input
-            type="text"
-            className="edit"
-            value={content}
-            onChange={this.handleChange}
-          ></input>
+          <input type="text" className="edit" value={content} onChange={this.handleChange}></input>
         </form>
       </li>
     );

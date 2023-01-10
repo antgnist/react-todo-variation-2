@@ -1,4 +1,5 @@
 import React from 'react';
+
 import './App.css';
 import Header from '../Header';
 import Footer from '../Footer';
@@ -7,10 +8,11 @@ import TaskList from '../TaskList';
 class App extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       tasks: [
         {
-          content: 'для примера 1',
+          content: 'для примера 11',
           completed: false,
           creationTime: new Date() - 239949,
           id: crypto.randomUUID(),
