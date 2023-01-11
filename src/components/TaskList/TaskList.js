@@ -33,7 +33,14 @@ TaskList.propTypes = {
   deleteTask: PropTypes.func,
   completeTask: PropTypes.func,
   updateTask: PropTypes.func,
-  tasks: PropTypes.arrayOf(PropTypes.checkPropTypes()),
+  tasks: PropTypes.arrayOf(
+    PropTypes.shape({
+      content: PropTypes.string,
+      completed: PropTypes.bool,
+      creationTime: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]),
+      id: PropTypes.string,
+    })
+  ),
 };
 
 export default TaskList;
