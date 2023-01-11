@@ -49,9 +49,9 @@ class Task extends React.Component {
             onChange={() => {
               completeTask(id);
             }}
-            id="chekDone"
+            id={id}
           />
-          <label htmlFor="chekDone">
+          <label htmlFor={id}>
             <span className="description">{content}</span>
             <span className="created">created {creationTime}</span>
           </label>
