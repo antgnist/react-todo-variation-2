@@ -1,5 +1,4 @@
 import React from 'react';
-console.log('work');
 
 import './App.css';
 import Header from '../Header';
@@ -13,19 +12,19 @@ class App extends React.Component {
     this.state = {
       tasks: [
         {
-          content: 'для примера 11',
+          content: 'For example 1',
           completed: false,
           creationTime: new Date() - 239949,
           id: crypto.randomUUID(),
         },
         {
-          content: 'для примера ля-ля',
+          content: 'For example 2',
           completed: false,
           creationTime: new Date() - 10000000,
           id: crypto.randomUUID(),
         },
         {
-          content: 'для примера 3',
+          content: 'For example 3',
           completed: false,
           creationTime: new Date(),
           id: crypto.randomUUID(),
@@ -34,68 +33,14 @@ class App extends React.Component {
 
       filter: 'all',
     };
-    this.addTaskHandler = this.addTaskHandler.bind(this);
-    this.deleteTaskHandler = this.deleteTaskHandler.bind(this);
-    this.completeTaskHandler = this.completeTaskHandler.bind(this);
   }
-
-  addTaskHandler(text) {
-    const newTask = {
-      content: text,
-      completed: false,
-      creationTime: new Date(),
-      id: crypto.randomUUID(),
-    };
-    this.setState(({ tasks }) => {
-      return { tasks: [newTask, ...tasks] };
-    });
-  }
-  deleteTaskHandler(id) {
-    this.setState(({ tasks }) => {
-      return {
-        tasks: tasks.filter((task) => task.id !== id),
-      };
-    });
-  }
-  completeTaskHandler(id) {
-    this.setState(({ tasks }) => {
-      return {
-        tasks: tasks.map((task) => {
-          if (task.id === id) {
-            return { ...task, completed: !task.completed };
-          }
-          return task;
-        }),
-      };
-    });
-  }
-
-  updateTaskHandler = (id, newText) => {
-    this.setState(({ tasks }) => {
-      return {
-        tasks: tasks.map((task) => {
-          if (task.id === id) {
-            return { ...task, content: newText };
-          }
-          return task;
-        }),
-      };
-    });
-  };
-
-  clearCompletedHandler = () => {
-    this.setState(({ tasks }) => {
-      return {
-        tasks: tasks.filter((task) => task.completed !== true),
-      };
-    });
-  };
 
   setFilterHandler = (filter) => {
     this.setState({ filter });
   };
 
-  filterForTasks = (tasks, filter) => {
+  filterForTasks = () => {
+    const { tasks, filter } = this.state;
     switch (filter) {
       case 'all': {
         return tasks;
@@ -112,9 +57,53 @@ class App extends React.Component {
     }
   };
 
+  updateTaskHandler = (id, newText) => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.map((task) => {
+        if (task.id === id) {
+          return { ...task, content: newText };
+        }
+        return task;
+      }),
+    }));
+  };
+
+  clearCompletedHandler = () => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.filter((task) => task.completed !== true),
+    }));
+  };
+
+  addTaskHandler = (text) => {
+    const newTask = {
+      content: text,
+      completed: false,
+      creationTime: new Date(),
+      id: crypto.randomUUID(),
+    };
+    this.setState(({ tasks }) => ({ tasks: [newTask, ...tasks] }));
+  };
+
+  deleteTaskHandler = (id) => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.filter((task) => task.id !== id),
+    }));
+  };
+
+  completeTaskHandler = (id) => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.map((task) => {
+        if (task.id === id) {
+          return { ...task, completed: !task.completed };
+        }
+        return task;
+      }),
+    }));
+  };
+
   render() {
-    const tasks = this.state.tasks;
-    const visibleTasks = this.filterForTasks(tasks, this.state.filter);
+    const { tasks, filter } = this.state;
+    const visibleTasks = this.filterForTasks();
     const todoCount = tasks.filter((task) => task.completed !== true).length;
     return (
       <section className="todoapp">
@@ -130,7 +119,7 @@ class App extends React.Component {
             todoCount={todoCount}
             clearCompleted={this.clearCompletedHandler}
             setFilter={this.setFilterHandler}
-            currentFilter={this.state.filter}
+            currentFilter={filter}
           />
         </section>
       </section>

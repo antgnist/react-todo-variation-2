@@ -6,45 +6,44 @@ class NewTaskForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = { value: '' };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  static defaultProps = {
-    addTask: () => {},
-  };
-  static propTypes = {
-    addTask: PropTypes.func,
-  };
-
-  handleChange(event) {
+  handleChange = (event) => {
     this.setState({ value: event.target.value });
-  }
+  };
 
-  handleSubmit(event) {
-    if (this.state.value) {
-      this.props.addTask(this.state.value);
+  handleSubmit = (event) => {
+    const { value } = this.state;
+    const { addTask } = this.props;
+    if (value) {
+      addTask(value);
       this.setState({ value: '' });
     }
-
     event.preventDefault();
-  }
+  };
 
   render() {
+    const { value } = this.state;
     return (
       <form onSubmit={this.handleSubmit}>
         <input
           type="text"
           className="new-todo"
           placeholder="What needs to be done?"
-          autoFocus
-          value={this.state.value}
+          value={value}
           onChange={this.handleChange}
-        ></input>
+        />
       </form>
     );
   }
 }
+
+NewTaskForm.defaultProps = {
+  addTask: () => {},
+};
+
+NewTaskForm.propTypes = {
+  addTask: PropTypes.func,
+};
 
 export default NewTaskForm;

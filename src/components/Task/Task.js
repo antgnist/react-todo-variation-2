@@ -3,41 +3,29 @@ import PropTypes from 'prop-types';
 import './Task.css';
 
 class Task extends React.Component {
-  state = { edit: false, oldValue: '', firstEditChange: true };
-
-  static defaultProps = {
-    deleteTask: () => {},
-    completeTask: () => {},
-    updateTask: () => {},
-    id: '',
-    completed: false,
-    content: '',
-    creationTime: 'some time ago',
-  };
-  static propTypes = {
-    deleteTask: PropTypes.func,
-    completeTask: PropTypes.func,
-    updateTask: PropTypes.func,
-    id: PropTypes.string,
-    completed: PropTypes.bool,
-    content: PropTypes.string,
-    creationTime: PropTypes.string,
-  };
+  constructor() {
+    super();
+    this.state = { edit: false, oldValue: '', firstEditChange: true };
+  }
 
   editOnHandler = () => {
     this.setState({ edit: true });
   };
 
   handleChange = (event) => {
-    if (this.state.firstEditChange) {
-      this.setState({ oldValue: this.props.content, firstEditChange: false });
+    const { firstEditChange } = this.state;
+    const { content, id, updateTask } = this.props;
+    if (firstEditChange) {
+      this.setState({ oldValue: content, firstEditChange: false });
     }
-    this.props.updateTask(this.props.id, event.target.value);
+    updateTask(id, event.target.value);
   };
 
   handleSubmit = (event) => {
-    if (!this.props.content) {
-      this.props.updateTask(this.props.id, this.state.oldValue);
+    const { oldValue } = this.state;
+    const { content, updateTask, id } = this.props;
+    if (!content) {
+      updateTask(id, oldValue);
     }
     this.setState({ firstEditChange: true, oldValue: '', edit: false });
     event.preventDefault();
@@ -45,9 +33,10 @@ class Task extends React.Component {
 
   render() {
     const { completed, content, creationTime, id, deleteTask, completeTask } = this.props;
+    const { edit } = this.state;
 
     let classView = completed ? 'completed' : '';
-    if (this.state.edit) {
+    if (edit) {
       classView += ' editing';
     }
     return (
@@ -60,8 +49,9 @@ class Task extends React.Component {
             onChange={() => {
               completeTask(id);
             }}
+            id="chekDone"
           />
-          <label>
+          <label htmlFor="chekDone">
             <span className="description">{content}</span>
             <span className="created">created {creationTime}</span>
           </label>
@@ -69,21 +59,45 @@ class Task extends React.Component {
             onClick={() => {
               this.editOnHandler();
             }}
+            aria-label="Edit todo"
             className="icon icon-edit"
-          ></button>
+            type="button"
+          />
           <button
             onClick={() => {
               deleteTask(id);
             }}
+            aria-label="Delete tpdo"
             className="icon icon-destroy"
-          ></button>
+            type="button"
+          />
         </div>
         <form onSubmit={this.handleSubmit}>
-          <input type="text" className="edit" value={content} onChange={this.handleChange}></input>
+          <input type="text" className="edit" value={content} onChange={this.handleChange} />
         </form>
       </li>
     );
   }
 }
+
+Task.defaultProps = {
+  deleteTask: () => {},
+  completeTask: () => {},
+  updateTask: () => {},
+  id: '',
+  completed: false,
+  content: '',
+  creationTime: 'some time ago',
+};
+
+Task.propTypes = {
+  deleteTask: PropTypes.func,
+  completeTask: PropTypes.func,
+  updateTask: PropTypes.func,
+  id: PropTypes.string,
+  completed: PropTypes.bool,
+  content: PropTypes.string,
+  creationTime: PropTypes.string,
+};
 
 export default Task;

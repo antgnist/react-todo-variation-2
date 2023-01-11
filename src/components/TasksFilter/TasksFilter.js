@@ -2,16 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './TasksFilter.css';
 
-class TasksFilter extends React.Component {
-  static defaultProps = {
-    setFilter: () => {},
-    currentFilter: '',
-  };
-  static propTypes = {
-    setFilter: PropTypes.func,
-    currentFilter: PropTypes.string,
-  };
-
+export default class TasksFilter extends React.Component {
   buttons = [
     { name: 'all', label: 'All', className: 'tasksFilter__all' },
     { name: 'active', label: 'Active', className: 'tasksFilter__active' },
@@ -28,7 +19,7 @@ class TasksFilter extends React.Component {
     return (
       <ul className="filters">
         {this.buttons.map(({ name, label, className }) => {
-          const clazz = currentFilter === name ? className + ' selected' : className;
+          const clazz = currentFilter === name ? `${className} selected` : className;
 
           return (
             <li key={name}>
@@ -43,4 +34,12 @@ class TasksFilter extends React.Component {
   }
 }
 
-export default TasksFilter;
+TasksFilter.defaultProps = {
+  setFilter: () => {},
+  currentFilter: '',
+};
+
+TasksFilter.propTypes = {
+  setFilter: PropTypes.func,
+  currentFilter: PropTypes.string,
+};

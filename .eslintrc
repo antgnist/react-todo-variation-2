@@ -4,26 +4,21 @@
       "es2021": true
     },
     "ignorePatterns": ["node_modules", "dist", "build"],
-    "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended",
-      "plugin:prettier/recommended",
-      "plugin:import/errors",
-      "plugin:import/warnings"
-    ],
+    "extends": ["airbnb", "airbnb/hooks", "plugin:react/jsx-runtime", "prettier"],
     "parser": "@babel/eslint-parser",
     "parserOptions": {
       "ecmaFeatures": {
         "jsx": true
       },
-      "ecmaVersion": 12,
+      "ecmaVersion": "latest",
       "babelOptions": {
         "configFile": "./babel.config.json"
       },
       "sourceType": "module"
     },
-    "plugins": ["react", "prettier", "import"],
+    "plugins": ["react", "jsx-a11y", "import", "react-hooks", "prettier"],
     "rules": {
+      "react/state-in-constructor": 0,
       "indent": ["error", 2,  { "SwitchCase": 1 }],
       "prettier/prettier": "error",
       "linebreak-style": [0, "unix"],
