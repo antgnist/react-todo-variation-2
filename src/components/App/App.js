@@ -1,4 +1,5 @@
 import React from 'react';
+console.log('work');
 
 import './App.css';
 import Header from '../Header';
