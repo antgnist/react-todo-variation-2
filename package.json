@@ -23,15 +23,15 @@
     "lint:fix": "eslint --debug src/ --fix",
     "format": "prettier --write src//**/*.{js,jsx,json}",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "eject": "react-scripts eject",
+    "prepare": "husky install"
   },
   "lint-staged": {
-    "*.(js|jsx)": ["npm run lint:fix", "npm run format", "git add"]
+    "*.(js|jsx)": [
+      "npm run lint:fix",
+      "npm run format",
+      "git add"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -64,7 +64,7 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "gh-pages": "^4.0.0",
-    "husky": "^8.0.3",
+    "husky": "^8.0.0",
     "lint-staged": "^13.1.0",
     "prettier": "^2.8.2"
   }
