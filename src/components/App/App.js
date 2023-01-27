@@ -74,12 +74,15 @@ class App extends React.Component {
     }));
   };
 
-  addTaskHandler = (text) => {
+  addTaskHandler = (text, ms) => {
     const newTask = {
       content: text,
       completed: false,
       creationTime: new Date(),
       id: crypto.randomUUID(),
+      ms: +ms,
+      timerFlag: false,
+      timerId: null,
     };
     this.setState(({ tasks }) => ({ tasks: [newTask, ...tasks] }));
   };
@@ -88,6 +91,7 @@ class App extends React.Component {
     this.setState(({ tasks }) => ({
       tasks: tasks.filter((task) => task.id !== id),
     }));
+    console.log('удалил нафиг задачу');
   };
 
   completeTaskHandler = (id) => {
@@ -95,6 +99,44 @@ class App extends React.Component {
       tasks: tasks.map((task) => {
         if (task.id === id) {
           return { ...task, completed: !task.completed };
+        }
+        return task;
+      }),
+    }));
+  };
+
+  updateTimerHandler = (id) => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.map((task) => {
+        if (task.id === id && task.ms !== undefined) {
+          const newTime = task.ms - 1000;
+          if (newTime <= 0) {
+            clearInterval(task.timerId);
+          }
+          const timeControl = newTime > 0 ? { ms: newTime } : { ms: 0, timerPlay: false };
+          return { ...task, ...timeControl };
+        }
+        return task;
+      }),
+    }));
+  };
+
+  controllerTimerHandler = (id, key) => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.map((task) => {
+        if (task.id === id) {
+          return { ...task, timerFlag: key };
+        }
+        return task;
+      }),
+    }));
+  };
+
+  updateTimerIdHandler = (id, timerId) => {
+    this.setState(({ tasks }) => ({
+      tasks: tasks.map((task) => {
+        if (task.id === id) {
+          return { ...task, timerId };
         }
         return task;
       }),
@@ -114,6 +156,9 @@ class App extends React.Component {
             deleteTask={this.deleteTaskHandler}
             completeTask={this.completeTaskHandler}
             updateTask={this.updateTaskHandler}
+            updateTimer={this.updateTimerHandler}
+            controllerTimer={this.controllerTimerHandler}
+            updateTimerId={this.updateTimerIdHandler}
           />
           <Footer
             todoCount={todoCount}

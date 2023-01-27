@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import './TaskList.css';
 import Task from '../Task';
 
-function TaskList({ tasks, deleteTask, completeTask, updateTask }) {
+function TaskList({ tasks, deleteTask, completeTask, updateTask, updateTimer, controllerTimer, updateTimerId }) {
   return (
     <ul className="todo-list">
       {tasks.map((task) => (
@@ -17,6 +17,12 @@ function TaskList({ tasks, deleteTask, completeTask, updateTask }) {
           deleteTask={deleteTask}
           completeTask={completeTask}
           updateTask={updateTask}
+          ms={task.ms}
+          timerFlag={task.timerFlag}
+          updateTimer={updateTimer}
+          controllerTimer={controllerTimer}
+          timerId={task.timerId}
+          updateTimerId={updateTimerId}
         />
       ))}
     </ul>

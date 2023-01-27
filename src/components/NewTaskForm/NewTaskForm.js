@@ -5,34 +5,68 @@ import './NewTaskForm.css';
 class NewTaskForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: '' };
+    this.state = { value: '', min: '', sec: '' };
   }
 
   handleChange = (event) => {
     this.setState({ value: event.target.value });
   };
 
+  handleChangeMin = (event) => {
+    this.setState({ min: event.target.value });
+  };
+
+  handleChangeSec = (event) => {
+    this.setState({ sec: event.target.value });
+  };
+
   handleSubmit = (event) => {
-    const { value } = this.state;
+    const { value, min, sec } = this.state;
     const { addTask } = this.props;
-    if (value) {
-      addTask(value);
-      this.setState({ value: '' });
+    function transformTime(m, s) {
+      if (!(Number.isFinite(+m) && Number.isFinite(+s))) {
+        return null;
+      }
+      if (!m.trim() && !s.trim()) {
+        return 0;
+      }
+      return Math.trunc(+m * 60 * 1000 + +s * 1000);
+    }
+
+    const msTime = transformTime(min, sec);
+    console.log('msTime: ', msTime);
+
+    if (value && msTime !== null) {
+      addTask(value, msTime);
+      this.setState({ value: '', min: '', sec: '' });
+      console.log('время: ', msTime);
+    } else {
+      alert('Введите данные в правильном формате!');
+      this.setState({ min: '', sec: '' });
     }
     event.preventDefault();
   };
 
   render() {
-    const { value } = this.state;
+    const { value, min, sec } = this.state;
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} className="new-todo-form">
+        <input type="text" className="new-todo" placeholder="Task" value={value} onChange={this.handleChange} />
         <input
           type="text"
-          className="new-todo"
-          placeholder="What needs to be done?"
-          value={value}
-          onChange={this.handleChange}
+          className="new-todo-form__timer"
+          placeholder="Min"
+          value={min}
+          onChange={this.handleChangeMin}
         />
+        <input
+          type="text"
+          className="new-todo-form__timer"
+          placeholder="Sec"
+          value={sec}
+          onChange={this.handleChangeSec}
+        />
+        <button type="submit" className="submit_form" aria-label="Submit" />
       </form>
     );
   }

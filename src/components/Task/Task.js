@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import './Task.css';
+import TimerTask from '../TimerTask';
 
 class Task extends React.Component {
   constructor() {
@@ -32,13 +34,27 @@ class Task extends React.Component {
   };
 
   render() {
-    const { completed, content, creationTime, id, deleteTask, completeTask } = this.props;
+    const {
+      completed,
+      content,
+      creationTime,
+      id,
+      deleteTask,
+      completeTask,
+      ms,
+      updateTimer,
+      timerFlag,
+      controllerTimer,
+      timerId,
+      updateTimerId,
+    } = this.props;
     const { edit } = this.state;
 
     let classView = completed ? 'completed' : '';
     if (edit) {
       classView += ' editing';
     }
+
     return (
       <li className={classView}>
         <div className="view">
@@ -52,8 +68,17 @@ class Task extends React.Component {
             id={id}
           />
           <label htmlFor={id}>
-            <span className="description">{content}</span>
-            <span className="created">created {creationTime}</span>
+            <span className="title">{content}</span>
+            <TimerTask
+              id={id}
+              ms={ms}
+              updateTimer={updateTimer}
+              timerFlag={timerFlag}
+              controllerTimer={controllerTimer}
+              timerId={timerId}
+              updateTimerId={updateTimerId}
+            />
+            <span className="description">created {creationTime}</span>
           </label>
           <button
             onClick={() => {
@@ -66,8 +91,10 @@ class Task extends React.Component {
           <button
             onClick={() => {
               deleteTask(id);
+              clearInterval(timerId);
+              updateTimerId(id, null); // удалить
             }}
-            aria-label="Delete tpdo"
+            aria-label="Delete todo"
             className="icon icon-destroy"
             type="button"
           />
