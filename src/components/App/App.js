@@ -6,34 +6,48 @@ import Footer from '../Footer';
 import TaskList from '../TaskList';
 
 class App extends React.Component {
+  timers = {};
+
   constructor(props) {
     super(props);
 
     this.state = {
       tasks: [
-        {
-          content: 'For example 1',
-          completed: false,
-          creationTime: new Date() - 239949,
-          id: crypto.randomUUID(),
-        },
-        {
-          content: 'For example 2',
-          completed: false,
-          creationTime: new Date() - 10000000,
-          id: crypto.randomUUID(),
-        },
-        {
-          content: 'For example 3',
-          completed: false,
-          creationTime: new Date(),
-          id: crypto.randomUUID(),
-        },
+        // {
+        //   content: 'For example 1',
+        //   completed: false,
+        //   creationTime: new Date() - 239949,
+        //   id: crypto.randomUUID(),
+        // },
+        // {
+        //   content: 'For example 2',
+        //   completed: false,
+        //   creationTime: new Date() - 10000000,
+        //   id: crypto.randomUUID(),
+        // },
+        // {
+        //   content: 'For example 3',
+        //   completed: false,
+        //   creationTime: new Date(),
+        //   id: crypto.randomUUID(),
+        // },
       ],
 
       filter: 'all',
     };
   }
+
+  componentWillUnmount() {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const idTimer of this.timers) {
+      clearInterval(idTimer);
+    }
+  }
+
+  clearTimer = (id) => {
+    clearInterval(this.timers[id]);
+    delete this.timers[id];
+  };
 
   setFilterHandler = (filter) => {
     this.setState({ filter });
@@ -81,9 +95,8 @@ class App extends React.Component {
       creationTime: new Date(),
       id: crypto.randomUUID(),
       ms: +ms,
-      timerFlag: false,
-      timerId: null,
     };
+    this.timers = { ...this.timers, [newTask.id]: null };
     this.setState(({ tasks }) => ({ tasks: [newTask, ...tasks] }));
   };
 
@@ -91,13 +104,13 @@ class App extends React.Component {
     this.setState(({ tasks }) => ({
       tasks: tasks.filter((task) => task.id !== id),
     }));
-    console.log('удалил нафиг задачу');
   };
 
   completeTaskHandler = (id) => {
     this.setState(({ tasks }) => ({
       tasks: tasks.map((task) => {
         if (task.id === id) {
+          this.stopTimer(id);
           return { ...task, completed: !task.completed };
         }
         return task;
@@ -105,42 +118,32 @@ class App extends React.Component {
     }));
   };
 
-  updateTimerHandler = (id) => {
-    this.setState(({ tasks }) => ({
-      tasks: tasks.map((task) => {
-        if (task.id === id && task.ms !== undefined) {
-          const newTime = task.ms - 1000;
-          if (newTime <= 0) {
-            clearInterval(task.timerId);
-          }
-          const timeControl = newTime > 0 ? { ms: newTime } : { ms: 0, timerPlay: false };
-          return { ...task, ...timeControl };
-        }
-        return task;
-      }),
-    }));
+  startTimer = (id) => {
+    if (!this.timers[id]) {
+      this.timers[id] = setInterval(() => {
+        console.log('Я таймер и я всё ещё тикаю, id задачи: ', id);
+        this.setState(({ tasks }) => {
+          const newTasks = tasks.map((task) => {
+            if (task.id === id) {
+              let newTime = task.ms - 1000;
+              if (newTime <= 0) {
+                this.clearTimer(task.id);
+                newTime = 0;
+              }
+              return { ...task, ms: newTime };
+            }
+            return task;
+          });
+          return { tasks: newTasks };
+        });
+      }, 1000);
+    }
   };
 
-  controllerTimerHandler = (id, key) => {
-    this.setState(({ tasks }) => ({
-      tasks: tasks.map((task) => {
-        if (task.id === id) {
-          return { ...task, timerFlag: key };
-        }
-        return task;
-      }),
-    }));
-  };
-
-  updateTimerIdHandler = (id, timerId) => {
-    this.setState(({ tasks }) => ({
-      tasks: tasks.map((task) => {
-        if (task.id === id) {
-          return { ...task, timerId };
-        }
-        return task;
-      }),
-    }));
+  stopTimer = (id) => {
+    if (this.timers[id]) {
+      this.clearTimer(id);
+    }
   };
 
   render() {
@@ -156,9 +159,8 @@ class App extends React.Component {
             deleteTask={this.deleteTaskHandler}
             completeTask={this.completeTaskHandler}
             updateTask={this.updateTaskHandler}
-            updateTimer={this.updateTimerHandler}
-            controllerTimer={this.controllerTimerHandler}
-            updateTimerId={this.updateTimerIdHandler}
+            startTimer={this.startTimer}
+            stopTimer={this.stopTimer}
           />
           <Footer
             todoCount={todoCount}

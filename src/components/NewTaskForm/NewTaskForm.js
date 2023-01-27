@@ -34,7 +34,6 @@ class NewTaskForm extends React.Component {
     }
 
     const msTime = transformTime(min, sec);
-    console.log('msTime: ', msTime);
 
     if (value && msTime !== null) {
       addTask(value, msTime);

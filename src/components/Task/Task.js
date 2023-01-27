@@ -34,20 +34,7 @@ class Task extends React.Component {
   };
 
   render() {
-    const {
-      completed,
-      content,
-      creationTime,
-      id,
-      deleteTask,
-      completeTask,
-      ms,
-      updateTimer,
-      timerFlag,
-      controllerTimer,
-      timerId,
-      updateTimerId,
-    } = this.props;
+    const { completed, content, creationTime, id, deleteTask, completeTask, ms, startTimer, stopTimer } = this.props;
     const { edit } = this.state;
 
     let classView = completed ? 'completed' : '';
@@ -69,15 +56,7 @@ class Task extends React.Component {
           />
           <label htmlFor={id}>
             <span className="title">{content}</span>
-            <TimerTask
-              id={id}
-              ms={ms}
-              updateTimer={updateTimer}
-              timerFlag={timerFlag}
-              controllerTimer={controllerTimer}
-              timerId={timerId}
-              updateTimerId={updateTimerId}
-            />
+            <TimerTask id={id} completed={completed} ms={ms} startTimer={startTimer} stopTimer={stopTimer} />
             <span className="description">created {creationTime}</span>
           </label>
           <button
@@ -90,9 +69,8 @@ class Task extends React.Component {
           />
           <button
             onClick={() => {
+              stopTimer(id);
               deleteTask(id);
-              clearInterval(timerId);
-              updateTimerId(id, null); // удалить
             }}
             aria-label="Delete todo"
             className="icon icon-destroy"
@@ -115,6 +93,9 @@ Task.defaultProps = {
   completed: false,
   content: '',
   creationTime: 'some time ago',
+  ms: 0,
+  startTimer: () => {},
+  stopTimer: () => {},
 };
 
 Task.propTypes = {
@@ -125,6 +106,9 @@ Task.propTypes = {
   completed: PropTypes.bool,
   content: PropTypes.string,
   creationTime: PropTypes.string,
+  ms: PropTypes.number,
+  startTimer: PropTypes.func,
+  stopTimer: PropTypes.func,
 };
 
 export default Task;
