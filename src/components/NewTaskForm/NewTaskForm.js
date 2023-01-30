@@ -38,7 +38,6 @@ class NewTaskForm extends React.Component {
     if (value && msTime !== null) {
       addTask(value, msTime);
       this.setState({ value: '', min: '', sec: '' });
-      console.log('время: ', msTime);
     } else {
       alert('Введите данные в правильном формате!');
       this.setState({ min: '', sec: '' });

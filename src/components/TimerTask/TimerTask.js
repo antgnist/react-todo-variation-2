@@ -1,8 +1,17 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
 import './TimerTask.css';
 
+const msToTime = (duration) => {
+  let seconds = parseInt((duration / 1000) % 60, 10);
+  let minutes = parseInt((duration / (1000 * 60)) % 60, 10);
+  let hours = parseInt((duration / (1000 * 60 * 60)) % 24, 10);
+  hours = hours < 10 ? `0${hours}` : hours;
+  minutes = minutes < 10 ? `0${minutes}` : minutes;
+  seconds = seconds < 10 ? `0${seconds}` : seconds;
+
+  return `${hours}:${minutes}:${seconds}`;
+};
 export default class TimerTask extends Component {
   render() {
     const { id, completed, ms, startTimer, stopTimer } = this.props;
@@ -26,7 +35,7 @@ export default class TimerTask extends Component {
               stopTimer(id);
             }}
           />
-          <span className="timer_indicate">{format(new Date(ms), 'mm:ss')}</span>
+          <span className="timer_indicate">{msToTime(ms)}</span>
         </span>
       ) : null;
 
