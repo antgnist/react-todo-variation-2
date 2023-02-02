@@ -1,4 +1,3 @@
-import { Component } from 'react';
 import PropTypes from 'prop-types';
 import './TimerTask.css';
 
@@ -12,35 +11,33 @@ const msToTime = (duration) => {
 
   return `${hours}:${minutes}:${seconds}`;
 };
-export default class TimerTask extends Component {
-  render() {
-    const { id, completed, ms, startTimer, stopTimer } = this.props;
-    const content =
-      ms !== 0 && ms !== undefined ? (
-        <span className="description">
-          <button
-            type="button"
-            aria-label="play timer"
-            className="icon icon-play"
-            disabled={completed}
-            onClick={() => {
-              startTimer(id);
-            }}
-          />
-          <button
-            type="button"
-            aria-label="pause timer"
-            className="icon icon-pause"
-            onClick={() => {
-              stopTimer(id);
-            }}
-          />
-          <span className="timer_indicate">{msToTime(ms)}</span>
-        </span>
-      ) : null;
 
-    return content;
-  }
+export default function TimerTask({ id, completed, ms, startTimer, stopTimer }) {
+  const content =
+    ms !== 0 && ms !== undefined ? (
+      <span className="description">
+        <button
+          type="button"
+          aria-label="play timer"
+          className="icon icon-play"
+          disabled={completed}
+          onClick={() => {
+            startTimer(id);
+          }}
+        />
+        <button
+          type="button"
+          aria-label="pause timer"
+          className="icon icon-pause"
+          onClick={() => {
+            stopTimer(id);
+          }}
+        />
+        <span className="timer_indicate">{msToTime(ms)}</span>
+      </span>
+    ) : null;
+
+  return content;
 }
 
 TimerTask.defaultProps = {
