@@ -1,60 +1,34 @@
-import React from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-import './App.css';
-import Header from '../Header';
 import Footer from '../Footer';
+import Header from '../Header';
 import TaskList from '../TaskList';
+import './App.css';
 
-class App extends React.Component {
-  timers = {};
+function App() {
+  const timers = useRef();
+  const [tasks, setTasks] = useState([]);
+  const [filter, setFilter] = useState('all');
+  useEffect(
+    () => () => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const idTask of Object.keys(timers)) {
+        clearInterval(timers[idTask]);
+      }
+    },
+    []
+  );
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      tasks: [
-        // {
-        //   content: 'For example 1',
-        //   completed: false,
-        //   creationTime: new Date() - 239949,
-        //   id: crypto.randomUUID(),
-        // },
-        // {
-        //   content: 'For example 2',
-        //   completed: false,
-        //   creationTime: new Date() - 10000000,
-        //   id: crypto.randomUUID(),
-        // },
-        // {
-        //   content: 'For example 3',
-        //   completed: false,
-        //   creationTime: new Date(),
-        //   id: crypto.randomUUID(),
-        // },
-      ],
-
-      filter: 'all',
-    };
-  }
-
-  componentWillUnmount() {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const idTimer of this.timers) {
-      clearInterval(idTimer);
-    }
-  }
-
-  clearTimer = (id) => {
-    clearInterval(this.timers[id]);
-    delete this.timers[id];
+  const clearTimer = (id) => {
+    clearInterval(timers[id]);
+    delete timers[id];
   };
 
-  setFilterHandler = (filter) => {
-    this.setState({ filter });
+  const setFilterHandler = (newFilter) => {
+    setFilter(newFilter);
   };
 
-  filterForTasks = () => {
-    const { tasks, filter } = this.state;
+  const filterForTasks = () => {
     switch (filter) {
       case 'all': {
         return tasks;
@@ -71,24 +45,22 @@ class App extends React.Component {
     }
   };
 
-  updateTaskHandler = (id, newText) => {
-    this.setState(({ tasks }) => ({
-      tasks: tasks.map((task) => {
+  const updateTaskHandler = (id, newText) => {
+    setTasks((oldTasks) =>
+      oldTasks.map((task) => {
         if (task.id === id) {
           return { ...task, content: newText };
         }
         return task;
-      }),
-    }));
+      })
+    );
   };
 
-  clearCompletedHandler = () => {
-    this.setState(({ tasks }) => ({
-      tasks: tasks.filter((task) => task.completed !== true),
-    }));
+  const clearCompletedHandler = () => {
+    setTasks((oldTasks) => oldTasks.filter((task) => task.completed !== true));
   };
 
-  addTaskHandler = (text, ms) => {
+  const addTaskHandler = (text, ms) => {
     const newTask = {
       content: text,
       completed: false,
@@ -96,82 +68,76 @@ class App extends React.Component {
       id: crypto.randomUUID(),
       ms: +ms,
     };
-    this.timers = { ...this.timers, [newTask.id]: null };
-    this.setState(({ tasks }) => ({ tasks: [newTask, ...tasks] }));
+    setTasks((oldTasks) => [newTask, ...oldTasks]);
   };
 
-  deleteTaskHandler = (id) => {
-    this.setState(({ tasks }) => ({
-      tasks: tasks.filter((task) => task.id !== id),
-    }));
+  const deleteTaskHandler = (id) => {
+    setTasks((oldTasks) => oldTasks.filter((task) => task.id !== id));
   };
 
-  completeTaskHandler = (id) => {
-    this.setState(({ tasks }) => ({
-      tasks: tasks.map((task) => {
-        if (task.id === id) {
-          this.stopTimer(id);
-          return { ...task, completed: !task.completed };
-        }
-        return task;
-      }),
-    }));
-  };
-
-  startTimer = (id) => {
-    if (!this.timers[id]) {
-      this.timers[id] = setInterval(() => {
-        console.log('Я таймер и я всё ещё тикаю, id задачи: ', id);
-        this.setState(({ tasks }) => {
-          const newTasks = tasks.map((task) => {
+  const startTimer = (id) => {
+    if (!timers[id]) {
+      timers[id] = setInterval(() => {
+        //  console.log('Я таймер и я всё ещё тикаю, id задачи: ', id);
+        setTasks((oldTasks) =>
+          oldTasks.map((task) => {
             if (task.id === id) {
               let newTime = task.ms - 1000;
               if (newTime <= 0) {
-                this.clearTimer(task.id);
+                clearTimer(task.id);
                 newTime = 0;
               }
               return { ...task, ms: newTime };
             }
             return task;
-          });
-          return { tasks: newTasks };
-        });
+          })
+        );
       }, 1000);
     }
   };
 
-  stopTimer = (id) => {
-    if (this.timers[id]) {
-      this.clearTimer(id);
+  const stopTimer = (id) => {
+    if (timers[id]) {
+      clearTimer(id);
     }
   };
 
-  render() {
-    const { tasks, filter } = this.state;
-    const visibleTasks = this.filterForTasks();
-    const todoCount = tasks.filter((task) => task.completed !== true).length;
-    return (
-      <section className="todoapp">
-        <Header addTask={this.addTaskHandler} />
-        <section className="main">
-          <TaskList
-            tasks={visibleTasks}
-            deleteTask={this.deleteTaskHandler}
-            completeTask={this.completeTaskHandler}
-            updateTask={this.updateTaskHandler}
-            startTimer={this.startTimer}
-            stopTimer={this.stopTimer}
-          />
-          <Footer
-            todoCount={todoCount}
-            clearCompleted={this.clearCompletedHandler}
-            setFilter={this.setFilterHandler}
-            currentFilter={filter}
-          />
-        </section>
-      </section>
+  const completeTaskHandler = (id) => {
+    setTasks((oldTasks) =>
+      oldTasks.map((task) => {
+        if (task.id === id) {
+          stopTimer(id);
+          return { ...task, completed: !task.completed };
+        }
+        return task;
+      })
     );
-  }
+  };
+
+  const visibleTasks = filterForTasks();
+  const todoCount = tasks.filter((task) => task.completed !== true).length;
+
+  return (
+    <section className="todoapp">
+      <Header addTask={addTaskHandler} />
+      <section className="main">
+        <TaskList
+          tasks={visibleTasks}
+          deleteTask={deleteTaskHandler}
+          completeTask={completeTaskHandler}
+          updateTask={updateTaskHandler}
+          startTimer={startTimer}
+          stopTimer={stopTimer}
+        />
+        <Footer
+          todoCount={todoCount}
+          clearCompleted={clearCompletedHandler}
+          setFilter={setFilterHandler}
+          currentFilter={filter}
+        />
+      </section>
+    </section>
+  );
 }
 
 export default App;
