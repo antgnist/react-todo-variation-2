@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import './Task.css';
@@ -18,17 +18,38 @@ export default function Task({
 }) {
   const [edit, setEdit] = useState(false);
   const [oldValue, setOldValue] = useState('');
-  const [firstEditChange, setFirstEditChange] = useState(true);
+  const refEditInput = useRef();
+
+  const escListener = useCallback(
+    (e) => {
+      // console.log('Нажата клавиша: ', e.code);
+      if (e.code === 'Escape') {
+        updateTask(id, oldValue);
+        setOldValue('');
+        setEdit(false);
+      }
+    },
+    [updateTask, id, oldValue]
+  );
+
+  useEffect(() => {
+    if (edit === true) {
+      refEditInput.current.focus();
+      document.addEventListener('keydown', escListener);
+    }
+    return () => {
+      if (edit === true) {
+        document.removeEventListener('keydown', escListener);
+      }
+    };
+  }, [edit, escListener]);
 
   const editOnHandler = () => {
     setEdit(true);
+    setOldValue(content);
   };
 
   const handleChange = (event) => {
-    if (firstEditChange) {
-      setOldValue(content);
-      setFirstEditChange(false);
-    }
     updateTask(id, event.target.value);
   };
 
@@ -36,7 +57,6 @@ export default function Task({
     if (!content) {
       updateTask(id, oldValue);
     }
-    setFirstEditChange(true);
     setOldValue('');
     setEdit(false);
     event.preventDefault();
@@ -83,7 +103,7 @@ export default function Task({
         />
       </div>
       <form onSubmit={handleSubmit}>
-        <input type="text" className="edit" value={content} onChange={handleChange} />
+        <input type="text" className="edit" value={content} onChange={handleChange} ref={refEditInput} />
       </form>
     </li>
   );
