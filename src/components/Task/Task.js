@@ -5,21 +5,35 @@ import './Task.css';
 import TimerTask from '../TimerTask';
 
 class Task extends React.Component {
-  constructor() {
-    super();
-    this.state = { edit: false, oldValue: '', firstEditChange: true };
+  state = { edit: false, oldValue: '' };
+
+  refEditInput = React.createRef();
+
+  componentDidUpdate(prevProps, prevState) {
+    const { edit } = this.state;
+    if (prevState.edit !== edit && edit === true) {
+      this.refEditInput.current.focus();
+      document.addEventListener('keydown', this.escListener);
+    }
   }
 
+  escListener = (e) => {
+    const { id, updateTask } = this.props;
+    const { oldValue } = this.state;
+    if (e.code === 'Escape') {
+      document.removeEventListener('keydown', Task.escListener);
+      updateTask(id, oldValue);
+      this.setState({ oldValue: '', edit: false });
+    }
+  };
+
   editOnHandler = () => {
-    this.setState({ edit: true });
+    const { content } = this.props;
+    this.setState({ edit: true, oldValue: content });
   };
 
   handleChange = (event) => {
-    const { firstEditChange } = this.state;
-    const { content, id, updateTask } = this.props;
-    if (firstEditChange) {
-      this.setState({ oldValue: content, firstEditChange: false });
-    }
+    const { id, updateTask } = this.props;
     updateTask(id, event.target.value);
   };
 
@@ -29,7 +43,7 @@ class Task extends React.Component {
     if (!content) {
       updateTask(id, oldValue);
     }
-    this.setState({ firstEditChange: true, oldValue: '', edit: false });
+    this.setState({ oldValue: '', edit: false });
     event.preventDefault();
   };
 
@@ -78,7 +92,7 @@ class Task extends React.Component {
           />
         </div>
         <form onSubmit={this.handleSubmit}>
-          <input type="text" className="edit" value={content} onChange={this.handleChange} />
+          <input type="text" ref={this.refEditInput} className="edit" value={content} onChange={this.handleChange} />
         </form>
       </li>
     );

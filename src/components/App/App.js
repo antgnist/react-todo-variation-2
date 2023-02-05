@@ -39,7 +39,7 @@ class App extends React.Component {
 
   componentWillUnmount() {
     // eslint-disable-next-line no-restricted-syntax
-    for (const idTimer of this.timers) {
+    for (const idTimer of Object.values(this.timers)) {
       clearInterval(idTimer);
     }
   }
