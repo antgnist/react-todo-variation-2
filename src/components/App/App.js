@@ -11,6 +11,7 @@ function App() {
   const [filter, setFilter] = useState('all');
   useEffect(
     () => () => {
+      console.log('Зашли в willmount-useeffect очищаем');
       // eslint-disable-next-line no-restricted-syntax
       for (const idTask of Object.keys(timers)) {
         clearInterval(timers[idTask]);

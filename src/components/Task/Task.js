@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import './Task.css';
@@ -20,29 +20,39 @@ export default function Task({
   const [oldValue, setOldValue] = useState('');
   const refEditInput = useRef();
 
-  const escListener = useCallback(
-    (e) => {
-      // console.log('Нажата клавиша: ', e.code);
-      if (e.code === 'Escape') {
-        updateTask(id, oldValue);
-        setOldValue('');
-        setEdit(false);
-      }
-    },
-    [updateTask, id, oldValue]
-  );
-
   useEffect(() => {
     if (edit === true) {
       refEditInput.current.focus();
-      document.addEventListener('keydown', escListener);
     }
-    return () => {
-      if (edit === true) {
-        document.removeEventListener('keydown', escListener);
-      }
-    };
-  }, [edit, escListener]);
+  }, [edit]);
+
+  // useEffect(() => {
+  //   const escListener = (e) => {
+  //     console.log('Нажата клавиша: ', e.code);
+  //     if (e.code === 'Escape') {
+  //       updateTask(id, oldValue);
+  //       setOldValue('');
+  //       setEdit(false);
+  //     }
+  //   };
+  //   if (edit === true) {
+  //     refEditInput.current.focus();
+  //     document.addEventListener('keydown', escListener);
+  //   }
+  //   return () => {
+  //     if (edit === true) {
+  //       document.removeEventListener('keydown', escListener);
+  //     }
+  //   };
+  // }, [edit, updateTask, id, oldValue]);
+
+  const onKeyEsc = (e) => {
+    if (e.code === 'Escape') {
+      updateTask(id, oldValue);
+      setOldValue('');
+      setEdit(false);
+    }
+  };
 
   const editOnHandler = () => {
     setEdit(true);
@@ -103,7 +113,14 @@ export default function Task({
         />
       </div>
       <form onSubmit={handleSubmit}>
-        <input type="text" className="edit" value={content} onChange={handleChange} ref={refEditInput} />
+        <input
+          type="text"
+          className="edit"
+          value={content}
+          onChange={handleChange}
+          ref={refEditInput}
+          onKeyDown={(e) => onKeyEsc(e)}
+        />
       </form>
     </li>
   );
