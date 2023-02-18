@@ -1,83 +1,129 @@
-import React from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+
 import './Task.css';
+import TimerTask from '../TimerTask';
 
-class Task extends React.Component {
-  constructor() {
-    super();
-    this.state = { edit: false, oldValue: '', firstEditChange: true };
-  }
+export default function Task({
+  content,
+  id,
+  updateTask,
+  deleteTask,
+  completeTask,
+  completed,
+  creationTime,
+  ms,
+  startTimer,
+  stopTimer,
+}) {
+  const [edit, setEdit] = useState(false);
+  const [oldValue, setOldValue] = useState('');
+  const refEditInput = useRef();
 
-  editOnHandler = () => {
-    this.setState({ edit: true });
+  useEffect(() => {
+    if (edit === true) {
+      refEditInput.current.focus();
+    }
+  }, [edit]);
+
+  // useEffect(() => {
+  //   const escListener = (e) => {
+  //     console.log('Нажата клавиша: ', e.code);
+  //     if (e.code === 'Escape') {
+  //       updateTask(id, oldValue);
+  //       setOldValue('');
+  //       setEdit(false);
+  //     }
+  //   };
+  //   if (edit === true) {
+  //     refEditInput.current.focus();
+  //     document.addEventListener('keydown', escListener);
+  //   }
+  //   return () => {
+  //     if (edit === true) {
+  //       document.removeEventListener('keydown', escListener);
+  //     }
+  //   };
+  // }, [edit, updateTask, id, oldValue]);
+
+  const onKeyEsc = (e) => {
+    if (e.code === 'Escape') {
+      updateTask(id, oldValue);
+      setOldValue('');
+      setEdit(false);
+    }
   };
 
-  handleChange = (event) => {
-    const { firstEditChange } = this.state;
-    const { content, id, updateTask } = this.props;
-    if (firstEditChange) {
-      this.setState({ oldValue: content, firstEditChange: false });
-    }
+  const editOnHandler = () => {
+    setEdit(true);
+    setOldValue(content);
+  };
+
+  const handleChange = (event) => {
     updateTask(id, event.target.value);
   };
 
-  handleSubmit = (event) => {
-    const { oldValue } = this.state;
-    const { content, updateTask, id } = this.props;
+  const handleSubmit = (event) => {
     if (!content) {
       updateTask(id, oldValue);
     }
-    this.setState({ firstEditChange: true, oldValue: '', edit: false });
+    setOldValue('');
+    setEdit(false);
     event.preventDefault();
   };
 
-  render() {
-    const { completed, content, creationTime, id, deleteTask, completeTask } = this.props;
-    const { edit } = this.state;
-
-    let classView = completed ? 'completed' : '';
-    if (edit) {
-      classView += ' editing';
-    }
-    return (
-      <li className={classView}>
-        <div className="view">
-          <input
-            className="toggle"
-            type="checkbox"
-            checked={completed}
-            onChange={() => {
-              completeTask(id);
-            }}
-            id={id}
-          />
-          <label htmlFor={id}>
-            <span className="description">{content}</span>
-            <span className="created">created {creationTime}</span>
-          </label>
-          <button
-            onClick={() => {
-              this.editOnHandler();
-            }}
-            aria-label="Edit todo"
-            className="icon icon-edit"
-            type="button"
-          />
-          <button
-            onClick={() => {
-              deleteTask(id);
-            }}
-            aria-label="Delete tpdo"
-            className="icon icon-destroy"
-            type="button"
-          />
-        </div>
-        <form onSubmit={this.handleSubmit}>
-          <input type="text" className="edit" value={content} onChange={this.handleChange} />
-        </form>
-      </li>
-    );
+  let classView = completed ? 'completed' : '';
+  if (edit) {
+    classView += ' editing';
   }
+
+  return (
+    <li className={classView}>
+      <div className="view">
+        <input
+          className="toggle"
+          type="checkbox"
+          checked={completed}
+          onChange={() => {
+            completeTask(id);
+          }}
+          id={id}
+        />
+        <label htmlFor={id}>
+          <span className="title">{content}</span>
+          <TimerTask id={id} completed={completed} ms={ms} startTimer={startTimer} stopTimer={stopTimer} />
+          <span className="description">created {creationTime}</span>
+        </label>
+        <button
+          onClick={() => {
+            editOnHandler();
+          }}
+          aria-label="Edit todo"
+          className="icon icon-edit"
+          type="button"
+        />
+        <button
+          onClick={() => {
+            stopTimer(id);
+            deleteTask(id);
+          }}
+          aria-label="Delete todo"
+          className="icon icon-destroy"
+          type="button"
+        />
+      </div>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          className="edit"
+          value={content}
+          onChange={handleChange}
+          ref={refEditInput}
+          onKeyDown={(e) => onKeyEsc(e)}
+        />
+      </form>
+    </li>
+  );
 }
 
 Task.defaultProps = {
@@ -88,6 +134,9 @@ Task.defaultProps = {
   completed: false,
   content: '',
   creationTime: 'some time ago',
+  ms: 0,
+  startTimer: () => {},
+  stopTimer: () => {},
 };
 
 Task.propTypes = {
@@ -98,6 +147,7 @@ Task.propTypes = {
   completed: PropTypes.bool,
   content: PropTypes.string,
   creationTime: PropTypes.string,
+  ms: PropTypes.number,
+  startTimer: PropTypes.func,
+  stopTimer: PropTypes.func,
 };
-
-export default Task;

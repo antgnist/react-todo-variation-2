@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import './TaskList.css';
 import Task from '../Task';
 
-function TaskList({ tasks, deleteTask, completeTask, updateTask }) {
+function TaskList({ tasks, deleteTask, completeTask, updateTask, startTimer, stopTimer }) {
   return (
     <ul className="todo-list">
       {tasks.map((task) => (
@@ -17,6 +17,9 @@ function TaskList({ tasks, deleteTask, completeTask, updateTask }) {
           deleteTask={deleteTask}
           completeTask={completeTask}
           updateTask={updateTask}
+          ms={task.ms}
+          startTimer={startTimer}
+          stopTimer={stopTimer}
         />
       ))}
     </ul>
@@ -27,12 +30,16 @@ TaskList.defaultProps = {
   deleteTask: () => {},
   completeTask: () => {},
   updateTask: () => {},
+  startTimer: () => {},
+  stopTimer: () => {},
   tasks: [],
 };
 TaskList.propTypes = {
   deleteTask: PropTypes.func,
   completeTask: PropTypes.func,
   updateTask: PropTypes.func,
+  startTimer: PropTypes.func,
+  stopTimer: PropTypes.func,
   tasks: PropTypes.arrayOf(
     PropTypes.shape({
       content: PropTypes.string,
