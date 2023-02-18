@@ -26,26 +26,6 @@ export default function Task({
     }
   }, [edit]);
 
-  // useEffect(() => {
-  //   const escListener = (e) => {
-  //     console.log('Нажата клавиша: ', e.code);
-  //     if (e.code === 'Escape') {
-  //       updateTask(id, oldValue);
-  //       setOldValue('');
-  //       setEdit(false);
-  //     }
-  //   };
-  //   if (edit === true) {
-  //     refEditInput.current.focus();
-  //     document.addEventListener('keydown', escListener);
-  //   }
-  //   return () => {
-  //     if (edit === true) {
-  //       document.removeEventListener('keydown', escListener);
-  //     }
-  //   };
-  // }, [edit, updateTask, id, oldValue]);
-
   const onKeyEsc = (e) => {
     if (e.code === 'Escape') {
       updateTask(id, oldValue);

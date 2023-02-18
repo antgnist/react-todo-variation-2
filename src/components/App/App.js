@@ -11,7 +11,6 @@ function App() {
   const [filter, setFilter] = useState('all');
   useEffect(
     () => () => {
-      console.log('Зашли в willmount-useeffect очищаем');
       // eslint-disable-next-line no-restricted-syntax
       for (const idTask of Object.keys(timers)) {
         clearInterval(timers[idTask]);
@@ -79,7 +78,6 @@ function App() {
   const startTimer = (id) => {
     if (!timers[id]) {
       timers[id] = setInterval(() => {
-        //  console.log('Я таймер и я всё ещё тикаю, id задачи: ', id);
         setTasks((oldTasks) =>
           oldTasks.map((task) => {
             if (task.id === id) {
